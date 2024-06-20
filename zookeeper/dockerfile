@@ -1,0 +1,23 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y openjdk-8-jdk wget
+
+RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-3.6.1/apache-zookeeper-3.6.1-bin.tar.gz  \
+    && tar -zxf apache-zookeeper-3.6.1-bin.tar.gz  \
+    && mv apache-zookeeper-3.6.1-bin /opt/zookeeper \
+    && rm apache-zookeeper-3.6.1-bin.tar.gz
+
+
+EXPOSE 2181 8079
+
+
+COPY zookeeper-entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY zookeeper-run.sh /usr/local/bin/run.sh
+COPY zoo.cfg /opt/zookeeper/conf/zoo.cfg
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/run.sh
+
+
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
+
