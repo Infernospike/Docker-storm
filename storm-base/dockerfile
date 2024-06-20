@@ -1,0 +1,29 @@
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y openjdk-8-jdk python3 wget bash maven mosquitto git
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+RUN python --version
+
+RUN mkdir -p /logs /data && chmod -R 777 /logs /data
+
+RUN wget https://archive.apache.org/dist/storm/apache-storm-1.2.4/apache-storm-1.2.4.tar.gz
+RUN tar -xvf apache-storm-1.2.4.tar.gz 
+RUN mv apache-storm-1.2.4 /opt/storm
+
+
+#RUN git clone /opt/storm/riot-bench
+
+COPY configure.sh /usr/local/bin/configure.sh
+RUN chmod +x /usr/local/bin/configure.sh
+
+
+
+ENV PATH=$PATH:/opt/storm/bin
+
+
+CMD ["/bin/bash"]
+
+
+
