@@ -1,0 +1,11 @@
+FROM storm-base
+EXPOSE 3772 6627
+
+RUN  apt-get update && apt-get install python3 
+
+COPY nimbus-start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+ENTRYPOINT [ "/usr/local/bin/start.sh" ]
+
+
