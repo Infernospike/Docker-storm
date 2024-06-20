@@ -1,0 +1,55 @@
+version: '3'
+services:
+  zookeeper:
+    build: ./zookeeper
+    ports: 
+      - "2181:2181"
+      - "8079:8079"
+    restart: always
+    tty: true
+
+  nimbus:
+    build: ./nimbus
+    depends_on:
+      - zookeeper
+    ports:
+      - "3772:3772"
+      - "6627:6627"
+    environment:
+      - ZOOKEEPER_HOST=zookeeper
+      - NIMBUS_HOST=nimbus
+    restart: always
+    tty: true
+    command: storm nimbus 
+  ui:
+    build: ./ui
+    depends_on:
+      - nimbus
+      - zookeeper
+    ports: 
+    - "8081:8081"
+    environment:
+      - ZOOKEEPER_HOST=zookeeper
+      - NIMBUS_HOST=nimbus
+    restart: always
+    tty: true
+    command: storm ui
+  
+  worker:
+    build: ./worker
+    depends_on:
+      - nimbus
+      - zookeeper
+    ports:
+      - "6700:6700"
+      - "6701:6701"
+      - "6702:6702"
+      - "6703:6703"
+      - "6704:6704"
+      - "6705:6705"
+    environment:
+      - ZOOKEEPER_HOST=zookeeper
+      - NIMBUS_HOST=nimbus
+    restart: always
+    tty: true
+    command: storm supervisor
